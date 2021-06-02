@@ -1,4 +1,5 @@
 import { observe } from "./observer/index.js";
+import proxy from "./utils/proxy.js";
 
 
 export function initState(vm) {
@@ -17,6 +18,10 @@ function initData(vm) {
     // 数据劫持
     // 对象: Object.defineProperty
     observe(data);
+    // 用户通过vm._data使用起来非常麻烦，优化：
+    for (let k in data) {
+        proxy(vm, '_data', k);
+    }
 }
 function initProps(vm) {}
 function initWatch(vm) {}
