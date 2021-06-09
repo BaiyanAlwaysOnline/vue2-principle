@@ -12,7 +12,7 @@ class Observer {
         if (Array.isArray(data)) {
             // 如果是数组，代理数组方法，AOP
             data.__proto__ = arrayProxyMtds;
-            this.observeArray(data);
+            this.observeArray(data); // 数组中普通类型不做观察
         }else {
             // 如果是对象，使用defineProperty重写属性
             this.walk(data);
@@ -55,7 +55,7 @@ export function observe(data) {
     // 必须是一个objectl类型
     if (typeof data !== 'object' || data == null) return data;
     // 观察过了
-    if (data.__ob__) return data;
-    // data中的数据类型多种多样，将observe的功能聚合起来，封装成一个类；
+    if (data.__ob__ instanceof Observer) return data;
+    // data中的数据类型多种多样，将observe的功能聚合起来，封装成一个类；而且也可以知道这个实例的class、
     return new Observer(data);
 }

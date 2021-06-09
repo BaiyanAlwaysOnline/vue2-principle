@@ -17,6 +17,8 @@ function initData(vm) {
     vm._data = data = typeof data === 'function' ? data.call(vm) : data;
     // 数据劫持
     // 对象: Object.defineProperty
+    // 只观测data里面有的属性  如果使用vm.c = 3，观测不到； vm.$set
+    // 数组中更改索引和长度，无法被监控
     observe(data);
     // 用户通过vm._data使用起来非常麻烦，优化：
     for (let k in data) {
