@@ -1,11 +1,8 @@
 export function patch(oldNode, newVNode) {
-    console.log(oldNode, newVNode);
-    // 
     const el = createElement(newVNode);
     const parentNode = oldNode.parentNode;
-    parentNode.insertBefore(el, oldNode.nextSilibing);
+    parentNode.insertBefore(el, oldNode.nextElementSibling);
     parentNode.removeChild(oldNode);
-    console.log(parentNode);
 }
 
 // ! Vue渲染流程
@@ -17,6 +14,7 @@ function createElement(vnode) {
         const el = document.createElement(tag);
         // 当前el有children就递归创建，逐步创建DOM树
         vnode.el = el;
+        setProperties(vnode);
         children.forEach(child => {
             vnode.el.appendChild(createElement(child));
         })
@@ -24,4 +22,20 @@ function createElement(vnode) {
         vnode.el = document.createTextNode(text);
     }
     return vnode.el;
+}
+
+function setProperties(vnode) {
+    const el = vnode.el;
+    const props = vnode.data;
+    for (let k in props) {
+        if (k === 'style') {
+            for (let styleName in props[k]) {
+                el.style[styleName] = props[k][styleName];
+            }
+        }else if(k === 'class') {
+            el.className = props[k]
+        }else {
+            el.setAttribute(k, props[k]);
+        }
+    }
 }
