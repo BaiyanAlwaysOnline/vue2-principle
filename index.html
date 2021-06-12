@@ -20,6 +20,16 @@
     </div>   
     <script src="./dist/umd/vue.js"></script>
     <script>
+        Vue.mixin({
+            created: function a() {
+                console.log(1);
+            }
+        })
+        Vue.mixin({
+            created: function b() {
+                console.log(2);
+            }
+        })
         // options api
         const vm = new Vue({
             data() {
@@ -30,6 +40,9 @@
                         age: 19
                     }
                 }
+            },
+            created: function d() {
+                console.log(3);
             },
             template: `<div id='app' key='1' style='color: red;fontSize:20px'>hello {{school.name}} {{school.age}} {{arr}}<span style="color: yellow">hello</span></div>`
         })

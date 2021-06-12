@@ -1,16 +1,20 @@
 import { compileToFuncs } from "./compiler/index.js";
 import { initState } from "./initState";
-import { mountComponent } from "./lifecycle.js";
+import { callHook, mountComponent } from "./lifecycle.js";
+import { mergeOptions } from "./utils/util.js";
 
 export default function initMixin(Vue) {
     Vue.prototype._init = function(options) {
         const vm = this;
-        vm.$options = options;
+        // 每次new的时候都把全局的options合并到当前实例上 
+        //合并 有可能是子组件 通过vm.constructor指向自己的构造函数
+        vm.$options = mergeOptions(vm.constructor.options, options)
         // 初始化的功能拓展
         // 1.初始化状态（将数据做一个初始化的劫持， 改变数据，更新视图）
         // vue组件中有很多属性 data props watch computed
+        callHook(vm, 'beforeCreate');
         initState(vm);
-        
+        callHook(vm, 'created');
         if (vm.$options.el) {
             this.$mount(vm.$options.el);
         }
