@@ -38,6 +38,6 @@ export default function initMixin(Vue) {
         // console.log(vm.$options.render);
 
         // 挂载这个组件
-        mountComponent(vm, el);
+        mountComponent(vm);
     }
 }

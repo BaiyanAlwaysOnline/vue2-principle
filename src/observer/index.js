@@ -1,5 +1,5 @@
 import arrayProxyMtds from "./array";
-
+import Dep from './dep.js';
 // observe功能
 class Observer {
     constructor(data) {
@@ -35,18 +35,25 @@ class Observer {
 function defineReactive(data, key, value) {
     // 递归劫持所有
     observe(value);
+    const dep = new Dep();
+    // 当触发get是，说明取值了 当前属性用来渲染，将当前属性和dep关联起来 
+    // 一个属性对应一个dep实例，多个属性可能对应一个watcher -> Dep.target
     Object.defineProperty(data, key, {
         get: () => {
-            console.log('用户获取值了');
+            // 依赖收集
+            if (Dep.target) {
+                dep.depend();
+            }
             return value;
         },
         set: (newValue) => {
             if (newValue === value) return;
-            console.log('用户设置值了');
             // 如果用户将值换成另一个对象，也将它变成响应式的；
             observe(newValue);
             // 如果使用data[key] = newValue -> 造成死循环
             value = newValue;
+            // 依赖更新
+            dep.notify();
         }
     })
 }

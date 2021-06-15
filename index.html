@@ -7,17 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="app" >
-        <h1>hello</h1>
-        <h2>world</h2>
-        <ul>
-            <li>1</li>
-            <li>2</li>
-            <li>3</li>
-            <li>4</li>
-            <li>5</li>
-        </ul>
-    </div>   
+    <div id="app" ></div>   
     <script src="./dist/umd/vue.js"></script>
     <script>
         Vue.mixin({
@@ -47,6 +37,8 @@
             template: `<div id='app' key='1' style='color: red;fontSize:20px'>hello {{school.name}} {{school.age}} {{arr}}<span style="color: yellow">hello</span></div>`
         })
         vm.$mount('#app');
+        vm.school.name = 'new1 school1'
+        console.log(vm);
     </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ export function patch(oldNode, newVNode) {
     const parentNode = oldNode.parentNode;
     parentNode.insertBefore(el, oldNode.nextElementSibling);
     parentNode.removeChild(oldNode);
+    return el;
 }
 
 // ! Vue渲染流程
