@@ -24,21 +24,30 @@
         const vm = new Vue({
             data() {
                 return {
-                    arr: [1, 2, 3, 4],
+                    // arr: [{a: 5}, 2, 3, 4],
+                    arr: [4],
+                    c: 1,
                     school: {
                         name: 'by',
                         age: 19
-                    }
+                    },
+                    name: 'by',
                 }
             },
             created: function d() {
                 console.log(3);
             },
-            template: `<div id='app' key='1' style='color: red;fontSize:20px'>hello {{school.name}} {{school.age}} {{arr}}<span style="color: yellow">hello</span></div>`
+            // template: `<div id='app' key='1' style='color: red;fontSize:20px'>hello {{school.name}} {{school.age}} {{arr}}<span style="color: yellow">hello</span></div>`
+            template: `<div id='app' key='1' style='color: red;fontSize:20px'>{{arr}} - {{c}}</div>`
         })
         vm.$mount('#app');
-        vm.school.name = 'new1 school1'
-        console.log(vm);
+
+        setTimeout(() => {
+            // vm.arr[0].a = 10;
+            vm.arr.push(999)
+            // vm.school.name = 'new1 school1'
+            console.log(vm);
+        }, 1000)
     </script>
 </body>
 </html>

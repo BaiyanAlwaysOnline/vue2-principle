@@ -3,6 +3,7 @@ import Dep from './dep.js';
 // observe功能
 class Observer {
     constructor(data) {
+        this.dep = new Dep();
         // 不能直接把属性挂载到data上，会造成死循环；
         Object.defineProperty(data, "__ob__", {
             value: this,
@@ -33,8 +34,9 @@ class Observer {
 }
 
 function defineReactive(data, key, value) {
+    // 对象类型都会返回一个observe实例
+    const cDep = observe(value);
     // 递归劫持所有
-    observe(value);
     const dep = new Dep();
     // 当触发get是，说明取值了 当前属性用来渲染，将当前属性和dep关联起来 
     // 一个属性对应一个dep实例，多个属性可能对应一个watcher -> Dep.target
@@ -43,6 +45,14 @@ function defineReactive(data, key, value) {
             // 依赖收集
             if (Dep.target) {
                 dep.depend();
+                // ? 再看看
+                if (cDep) {
+                    // 默认给数所有的对象类型添加一个dep属性，当对这个数组取值的时候，触发数组存起来的渲染watcher
+                    // 这个dep这里只有数组使用；
+                    // 对象是提供给Vue.$set使用的
+                    cDep.dep.depend();
+                }
+                console.log(dep, cDep);
             }
             return value;
         },
@@ -60,7 +70,7 @@ function defineReactive(data, key, value) {
 
 export function observe(data) {
     // 必须是一个objectl类型
-    if (typeof data !== 'object' || data == null) return data;
+    if (typeof data !== 'object' || data == null) return;
     // 观察过了
     if (data.__ob__ instanceof Observer) return data;
     // data中的数据类型多种多样，将observe的功能聚合起来，封装成一个类；而且也可以知道这个实例的class、

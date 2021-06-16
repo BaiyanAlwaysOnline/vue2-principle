@@ -9,6 +9,8 @@ class Watcher{
         this.cb = cb;
         this.options = options;
         this.id = id++; // 每一个watcher都是唯一的
+        this.deps = [];
+        this.depsId = new Set();
         if (typeof expFunction === 'function') {
             this.getter = expFunction
         }
@@ -22,7 +24,16 @@ class Watcher{
         popDep();
     }
     update() {
+        debugger
         this.get();
+    }
+    addDepend(dep) {
+        const id = dep.id;
+        if (!this.depsId.has(id)) {
+            this.deps.push(dep);
+            this.depsId.add(id);
+            dep.addSub(this);
+        }
     }
 }
 

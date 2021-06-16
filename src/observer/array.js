@@ -18,7 +18,7 @@ mtdsList.forEach(mtd => {
         // 数组代理方法执行了
         console.log('数组代理方法执行了');
         // 如果使用数组的方法，传入了Object类型，劫持
-        let inserted;
+        let inserted, ob = this.__ob__;
         switch (mtd) {
             case 'push':
             case 'unshift':
@@ -30,8 +30,10 @@ mtdsList.forEach(mtd => {
             default:
                 break;
         }
-        if (inserted) this.__ob__.observeArray(inserted);
-        return arrayOriginalMtds[mtd].apply(this, agv);
+        if (inserted) ob.observeArray(inserted);
+        const ret = arrayOriginalMtds[mtd].apply(this, agv);
+        ob.dep.notify();
+        return ret;
     }
 })
 
