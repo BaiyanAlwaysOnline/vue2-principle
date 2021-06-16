@@ -24,7 +24,6 @@ class Watcher{
         popDep();
     }
     update() {
-        debugger
         this.get();
     }
     addDepend(dep) {
