@@ -62,3 +62,41 @@ export function mergeOptions(p, c) {
 
     return options;
 }
+
+
+let cbsQueue = [], timerFunc, pending = false;
+
+function flushCbs() {
+    while(cbsQueue.length) {
+        const cb = cbsQueue.shift();
+        cb();
+    }
+    pending = false;
+}
+
+if(Promise) {
+    timerFunc = () => Promise.resolve().then(flushCbs);
+}else if(MutationObserver) { // 可以监控Dom的变化，异步更新
+    const observer = new MutationObserver(flushCbs);
+    const textNode = document.createTextNode(1);
+    // 监控文本节点
+    observer.observe(textNode, { characterData: true });
+    // 变化文本
+    timerFunc = () => textNode.textContent = 2;
+}else if(setImmediate) {
+    // ie里的api，性能好于setTimeout
+    timerFunc = () => setImmediate(flushCbs);
+}else {
+    timerFunc = () => setTimeout(flushCbs);
+}
+// 用户调用$nextTick会在flush之后执行；
+// 同样是批处理
+export function nextTick(cb) {
+    // Vue3里的nextTick原理就是promise.then, Vue2需要做兼容处理
+    cbsQueue.push(cb);
+    // 需要做批处理
+    if(!pending) {
+        pending = true;
+        timerFunc();
+    }
+}

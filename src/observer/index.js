@@ -52,7 +52,6 @@ function defineReactive(data, key, value) {
                     // 对象是提供给Vue.$set使用的
                     cDep.dep.depend();
                 }
-                console.log(dep, cDep);
             }
             return value;
         },

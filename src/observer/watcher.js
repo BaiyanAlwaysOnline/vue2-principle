@@ -1,3 +1,4 @@
+import { nextTick } from "../utils/util";
 import { popDep, pushDep } from "./dep";
 
 // watcher类
@@ -24,8 +25,14 @@ class Watcher{
         popDep();
     }
     update() {
+        // 这里不能每次都调用get方法，get方法会重新渲染页面
+        // this.get();
+        queueWatcher(this);
+    }
+    run() {
         this.get();
     }
+
     addDepend(dep) {
         const id = dep.id;
         if (!this.depsId.has(id)) {
@@ -36,4 +43,29 @@ class Watcher{
     }
 }
 
-export default Watcher  ;
+let queue = [];
+let pending = false;
+let has = {};
+
+function flushSchedulerQueue() {
+    queue.forEach((watcher) => {watcher.run(); watcher.cb()});
+    queue = [];
+    has = {};
+    pending = false;
+}
+
+
+// watcher 批处理
+function queueWatcher(watcher) {
+    const id = watcher.id;
+    if (!has[id]) {
+        queue.push(watcher);
+        has[id] = true;
+        if (!pending) {
+            nextTick(flushSchedulerQueue);
+            pending = true;
+        }
+    }
+}
+
+export default Watcher;

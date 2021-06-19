@@ -1,5 +1,6 @@
 import { initGlobalApi } from "./global-api/index.js";
 import initMixin from "./init";
+import { stateMixin } from "./initState.js";
 import { lifecycleMixin } from "./lifecycle";
 import { renderMixin } from "./vnode/index.js";
 
@@ -12,5 +13,6 @@ initMixin(Vue); // init data
 lifecycleMixin(Vue); // update  patch
 renderMixin(Vue); // generate vnode 
 initGlobalApi(Vue);
+stateMixin(Vue);
 
 export default Vue;

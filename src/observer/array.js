@@ -16,7 +16,7 @@ const mtdsList = [
 mtdsList.forEach(mtd => {
     arrayProxyMtds[mtd] = function(...agv) {
         // 数组代理方法执行了
-        console.log('数组代理方法执行了');
+        // console.log('数组代理方法执行了');
         // 如果使用数组的方法，传入了Object类型，劫持
         let inserted, ob = this.__ob__;
         switch (mtd) {
