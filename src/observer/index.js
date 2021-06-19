@@ -44,6 +44,7 @@ function defineReactive(data, key, value) {
         get: () => {
             // 依赖收集
             if (Dep.target) {
+                debugger;
                 dep.depend();
                 // ? 再看看
                 if (cDep) {

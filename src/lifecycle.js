@@ -21,7 +21,9 @@ export function mountComponent(vm) {
         vm._update(vm._render());
     }
     // 渲染watcher,初始化就会执行
-    const watcher = new Watcher(vm, updateComponent, () => callHook(vm, 'updated'), true);
+    const watcher = new Watcher(vm, updateComponent, () => callHook(vm, 'updated'), {
+        user: false,
+    });
     callHook(vm, 'mounted')
 }
 

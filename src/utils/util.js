@@ -4,8 +4,8 @@ const strats = {};
 strats.data = function(p, c){
     return c;
 };
-strats.computed = function(){};
-strats.watch = function(){};
+// strats.computed = function(){};
+// strats.watch = function(){};
 // 生命周期的策略
 const LIFE_CYCLES = [
     'beforeCreate',

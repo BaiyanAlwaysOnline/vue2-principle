@@ -1,4 +1,5 @@
 import { observe } from "./observer/index.js";
+import Watcher from "./observer/watcher.js";
 import proxy from "./utils/proxy.js";
 import { nextTick } from "./utils/util.js";
 
@@ -27,13 +28,47 @@ function initData(vm) {
     }
 }
 function initProps(vm) {}
-function initWatch(vm) {}
+function initWatch(vm) {
+    // watch有三种写法
+    // 1. k: v
+    // 2. 'k.k.k'
+    // 3. k: [method1, method2]
+    // 4. k: 当前实例上的方法
+    // 5. k: {handler: () => {}}
+    const watch = vm.$options.watch;
+    for (let k in watch) {
+        const handler = watch[k];
+        if (Array.isArray(handler)) {
+            handler.forEach(handle => createWatcher(vm, k, handle))
+        }else {
+            createWatcher(vm, k, handler);
+        }
+    }
+}
 function initComputed(vm) {}
 function initMethods(vm) {}
+
+function createWatcher(vm, exprOrFunc, handler, options) {
+    if (typeof handler === 'object') {
+        options = handler;
+        handler = options.handler;
+    }
+    // handler为当前实例上的方法
+    if (typeof handler === 'string') {
+        handler = vm[handler];
+    }
+    return vm.$watch(exprOrFunc, handler, options);
+}
 
 
 export function stateMixin(Vue) {
     Vue.prototype.$nextTick = function(cb) {
         nextTick(cb)
+    }
+    Vue.prototype.$watch = function(exprOrFunc, cb, options) {
+        new Watcher(this, exprOrFunc, cb, {...options, user: true});
+        if (options?.immediate) {
+            cb();
+        }
     }
 }

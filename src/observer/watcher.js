@@ -4,25 +4,37 @@ import { popDep, pushDep } from "./dep";
 // watcher类
 let id = 0;
 class Watcher{
-    constructor(vm, expFunction, cb, options) {
+    constructor(vm, exprOrFunc, cb, options) {
         this.vm = vm;
-        this.expFunction = expFunction;
+        this.exprOrFunc = exprOrFunc;
         this.cb = cb;
         this.options = options;
+        this.user = !!options.user; // 是否是用户的watcher
         this.id = id++; // 每一个watcher都是唯一的
         this.deps = [];
         this.depsId = new Set();
-        if (typeof expFunction === 'function') {
-            this.getter = expFunction
-        }
-        this.get();
+        if (typeof exprOrFunc === 'function') {
+            this.getter = exprOrFunc
+        }else {
+            // 可能是个字符串，说明是用户watcher，当在当前实例上取值时，才触发收集依赖
+            this.getter = function() {
+                 let obj = vm;
+                 for (let i = 0, path = exprOrFunc.split('.'); i < path.length; i ++) {
+                    obj = obj[path[i]]
+                 };
+                 return obj
+            }
+        } 
+        this.value = this.get();
     }
+    // 依赖收集
     get() {
         // 利用js是单线程的，当render执行的时候，触发响应式对象的get，将依赖收集
         pushDep(this);
-        this.getter();
+        const val = this.getter();
         // 移除当前依赖 因为是渲染watcher，防止用户在代码里面 console.log(this.xx)的时候，触发watcher
         popDep();
+        return val;
     }
     update() {
         // 这里不能每次都调用get方法，get方法会重新渲染页面
@@ -30,7 +42,11 @@ class Watcher{
         queueWatcher(this);
     }
     run() {
-        this.get();
+        const oldValue = this.value;
+        const newValue = this.value = this.get();
+        if (this.user) {
+            this.cb(oldValue, newValue);
+        }
     }
 
     addDepend(dep) {
@@ -48,7 +64,10 @@ let pending = false;
 let has = {};
 
 function flushSchedulerQueue() {
-    queue.forEach((watcher) => {watcher.run(); watcher.cb()});
+    queue.forEach((watcher) => {
+        watcher.run();
+        if (!watcher.user) watcher.cb();
+    });
     queue = [];
     has = {};
     pending = false;
