@@ -44,12 +44,11 @@ function defineReactive(data, key, value) {
         get: () => {
             // 依赖收集
             if (Dep.target) {
-                debugger;
                 dep.depend();
                 // ? 再看看
                 if (cDep) {
                     // 默认给数所有的对象类型添加一个dep属性，当对这个数组取值的时候，触发数组存起来的渲染watcher
-                    // 这个dep这里只有数组使用；
+                    // 这个dep这里只有数组使用，因为属性都通过闭包dep收集依赖；
                     // 对象是提供给Vue.$set使用的
                     cDep.dep.depend();
                 }

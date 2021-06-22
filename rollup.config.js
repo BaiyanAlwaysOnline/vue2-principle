@@ -17,7 +17,7 @@ export default {
             open: true,
             port: 3000,
             contentBase: '',
-            openPage: '/watch.html'
+            openPage: '/domdiff.html'
         })
     ]
 }

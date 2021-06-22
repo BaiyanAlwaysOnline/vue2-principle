@@ -14,25 +14,29 @@
             el: '#app',
             data() {
                 return {
-                    a: {a: {a: 1}}
+                    a: [1, 2, 3]
                 }
             },
-            watch: {
-                'a.a.a': {
-                    handler(o, n) {
-                        console.log('user watch', o, n);
-                    },
-                    immediate: true
-                }
-            },
+            // watch: {
+            //     'a.a.a': {
+            //         handler(o, n) {
+            //             console.log('user watch', o, n);
+            //         },
+            //         immediate: true
+            //     }
+            // },
             template: `<div>{{a}}</div>`
          });
-         vm.a.a.a= 2;
-         vm.a.a.a= 3;
-         setTimeout(() => {
-             vm.a.a.a = 4
-         }, 1000)
-         console.log(vm);
+        //  vm.a.a.a= 2;
+        //  vm.a.a.a= 3;
+        //  setTimeout(() => {
+        //      vm.a.a.a = 4
+        //      vm.$nextTick(() => {
+        //         console.log(vm);
+        //      })
+        //  }, 1000)
+        // vm.a.push(33)
+        console.log(vm);
     </script>
 </body>
 </html>
