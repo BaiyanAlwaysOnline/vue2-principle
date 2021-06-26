@@ -18,32 +18,3 @@ initGlobalApi(Vue);
 stateMixin(Vue);
 
 export default Vue;
-
-// test code
-let vm1 = new Vue();
-let render1 = compileToFuncs(
-    `<div>
-        <li style="background: yellow" key='D'>D</li>
-        <li style="background: green" key='B'>B</li>
-        <li style="background: green" key='F'>F</li>
-        <li style="background: red" key='C'>C</li>
-        <li style="background: orange" key='A'>A</li>
-    </div>`
-)
-
-let vnode1 = render1.call(vm1);
-document.body.appendChild(createElement(vnode1))
-
-let vm2 = new Vue();
-let render2 = compileToFuncs(
-    `<div>
-        <li style="background: purple" key='CC'>CC</li>
-        <li style="background: red" key='A'>CC</li>
-    </div>`
-)
-
-let vnode2 = render2.call(vm2);
-
-setTimeout(() => {
-    patch(vnode1, vnode2)
-}, 2000)
