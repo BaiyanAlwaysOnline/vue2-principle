@@ -38,6 +38,7 @@ let vm2 = new Vue();
 let render2 = compileToFuncs(
     `<div>
         <li style="background: purple" key='CC'>CC</li>
+        <li style="background: red" key='A'>CC</li>
     </div>`
 )
 

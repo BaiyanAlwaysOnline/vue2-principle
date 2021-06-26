@@ -110,6 +110,7 @@ function updateChildren(oldChild, newChild, parent) {
      let oldEndIndex = oldChild.length - 1;
      let oldStartNode = oldChild[oldStartIndex];
      let oldEndNode = oldChild[oldEndIndex];
+     let map = makeIndexByKey(oldChild);
     // 新节点指针
      let newStartIndex = 0;
      let newEndIndex = newChild.length - 1;
@@ -121,7 +122,11 @@ function updateChildren(oldChild, newChild, parent) {
      // old：A B C D
      // new：A B C D E 
      while(oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-        if (isSameVnode(oldStartNode, newStartNode)) {
+         if (!oldStartNode) {  // 如果是null，直接下一步
+            oldStartNode = oldChild[++oldStartIndex];
+         }else if(!oldEndNode) {
+            oldEndNode = oldChild[--oldEndNodeIndex];
+         }else if (isSameVnode(oldStartNode, newStartNode)) {
             // 从前往后比
             patch(oldStartNode, newStartNode) // 更新属性，递归更新子节点
             // 移动指针
@@ -153,7 +158,20 @@ function updateChildren(oldChild, newChild, parent) {
             newStartNode = newChild[++newStartIndex];
         }else {
             // 暴力比对
-
+            // 新的和旧的比，旧的没有的，把新的直接插到旧开始指针的前面，旧指针不变，新指针挪;
+            // 旧的有的，挪到旧开始指针的前面，然后置为null，防止数组塌陷
+            // old: D F A E C
+            // new: E M K D F I A
+            const moveIndex = map[newStartNode.key];
+            if (moveIndex === undefined) {
+                parent.insertBefore(createElement(newStartNode), oldStartNode.el);
+            }else {
+                let moveNode = oldChildren[moveIndex];
+                oldChildren[moveIndex] = null;
+                parent.insertBefore(moveNode.el, oldStartNode.el);
+                patch(moveNode, newStartNode);
+            };
+            newStartNode = newChild[++newStartIndex];
         }
      }
      // 如果新的有剩余的，插入
@@ -172,9 +190,20 @@ function updateChildren(oldChild, newChild, parent) {
      // 如果老的有剩余的，删除
      if (oldStartIndex <= oldEndIndex) {
         for (let i = oldStartIndex; i <= oldEndIndex; i++) {
-            parent.removeChild(oldChild[i].el)
+            if (oldChild[i] != null) {
+                parent.removeChild(oldChild[i].el)
+            }
         }
      }
+}
+
+// 创建旧节点映射表
+function makeIndexByKey(children) {
+    let map = {};
+    children.forEach((child, index) => {
+        map[child.key] = index;  // {'A': '0', 'B': '1', 'C': '2'}
+    })
+    return map;
 }
 
 function isSameVnode(oldVnode, newVnode) {
