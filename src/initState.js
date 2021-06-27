@@ -1,3 +1,4 @@
+import Dep from "./observer/dep.js";
 import { observe } from "./observer/index.js";
 import Watcher from "./observer/watcher.js";
 import proxy from "./utils/proxy.js";
@@ -45,8 +46,54 @@ function initWatch(vm) {
         }
     }
 }
-function initComputed(vm) {}
 function initMethods(vm) {}
+
+function initComputed(vm) {
+    // 1.通过defineProperty实现；
+    // 2.需要一个watcher
+    // 3.dirty属性，实现缓存 
+    const computed = vm.$options.computed;
+    const watchers = vm._computedWatchers = {};
+    for (const key in computed) {
+        const userDef = computed[key];
+        const getter = typeof userDef === 'function' ? userDef : userDef.get;
+        watchers[key] = new Watcher(vm, getter, () => {}, { lazy: true });
+        defineComputed(vm, key, userDef)
+    }
+}
+function defineComputed(target, key, userDef) {
+    const sharedPropertyDefinition = {
+        enumerable: true,
+        configurable: true,
+        get: function(){},
+        set: function(){},
+    };
+
+    if (typeof userDef !== 'function') {
+        sharedPropertyDefinition.set = userDef.set;
+    }
+    sharedPropertyDefinition.get = createComputedGetter(key);
+    Object.defineProperty(target, key, sharedPropertyDefinition)
+}
+
+// 高阶函数封装getter
+function createComputedGetter(key) {
+    return function() {
+        // get的this指向vm
+        const watcher = this._computedWatchers[key];
+        if (watcher) {
+            if (watcher.dirty) {
+                watcher.evaluate(); // 执行完成，dep会将计算属性watcher记住，然后此时watcher栈中还有渲染watcher
+            }
+            // ! 关键：让这个计算属性的dep记住渲染watcher
+            if (Dep.target) {
+                watcher.depend();
+            }
+            return watcher.value;  
+        }
+    }
+}
+
 
 function createWatcher(vm, exprOrFunc, handler, options) {
     if (typeof handler === 'object') {

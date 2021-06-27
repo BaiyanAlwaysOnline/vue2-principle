@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <span>哈哈{{fullName}}</span>
+    </div>
+    <script src="./dist/umd/vue.js"></script>
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    firstName: '柏',
+                    lastName: '言',
+                }
+            },
+            computed: {
+                fullName({firstName, lastName}) {
+                    let k = 0
+                    let full = '';
+                    for(let i = 0; i < 100; i ++) {
+                        full = firstName + lastName
+                    }
+                    return full;
+                },
+            }
+        });
+        // setTimeout(() => {
+        //     vm.firstName = '李'
+        // }, 2000)
+        console.log(vm.fullName);
+        console.log(vm.fullName);
+        console.log(vm.fullName);
+        console.log(vm.fullName);
+        console.log(vm.fullName);
+        console.log(vm);
+    </script>
+</body>
+</html>

@@ -17,7 +17,7 @@ export default {
             open: true,
             port: 3000,
             contentBase: '',
-            openPage: '/domdiff.html'
+            openPage: '/computed.html'
         })
     ]
 }

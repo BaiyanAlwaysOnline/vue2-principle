@@ -19,13 +19,16 @@ class Dep{
 }
 
 Dep.target = null;  // 静态属性 唯一
+const stack = []; // 使用栈记录所有watcher
 
 export function pushDep(watcher) {
     Dep.target = watcher;
+    stack.push(watcher);
 }
 
 export function popDep() {
-    Dep.target = null;
+    stack.pop();
+    Dep.target = stack[stack.length - 1];
 }
 
 export default Dep;

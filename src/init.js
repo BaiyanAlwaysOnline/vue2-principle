@@ -30,8 +30,8 @@ export default function initMixin(Vue) {
         vm.$el = $el;
         let { template, render } = vm.$options;
         if (!render) {
-            if (!template && el) {
-                template = el.outerHTML;
+            if (!template && $el) {
+                template = $el.outerHTML;
             }
             vm.$options.render = compileToFuncs(template);
         }
