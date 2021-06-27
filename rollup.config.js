@@ -17,7 +17,7 @@ export default {
             open: true,
             port: 3000,
             contentBase: '',
-            openPage: '/computed.html'
+            openPage: '/component.html'
         })
     ]
 }
