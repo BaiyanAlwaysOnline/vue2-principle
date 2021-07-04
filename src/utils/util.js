@@ -1,11 +1,21 @@
 // 合并的策略对象
 const strats = {};
 // 策略有：
-strats.data = function(p, c){
-    return c;
-};
+// strats.data = function(p, c){
+//     return c;
+// };
 // strats.computed = function(){};
 // strats.watch = function(){};
+
+// 组件的合并策略是就近原则，我们可以将全局属性放到原型链上,继承实现； 
+strats.components = function(p, c){
+    const ret = Object.create(p);
+    for (let k in c) {
+        ret[k] = c[k];
+    }
+    return ret;
+}; 
+
 // 生命周期的策略
 const LIFE_CYCLES = [
     'beforeCreate',
@@ -56,7 +66,12 @@ export function mergeOptions(p, c) {
             options[key] = strats[key](p[key], c[key]);
         }else {
             // 默认合并,使用子类的
-            options[key] = c[key]
+            if (c[key]) {
+                options[key] = c[key]
+            }else {
+                options[key] = p[key]
+            }
+            
         }
     }
 
@@ -100,3 +115,15 @@ export function nextTick(cb) {
         timerFunc();
     }
 }
+
+function makeMap(str) {
+    const list = str.split(',');
+    // 创建真实Dom的映射表；
+    const mappings = {};
+    for(let i = 0; i < list.length; i++) {
+        mappings[list[i]] = true;
+    }
+    return (key) => mappings[key];
+}
+
+export const isReservedTag = makeMap('a,div,p,button,ul,li');

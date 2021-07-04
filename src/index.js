@@ -1,10 +1,8 @@
-import { compileToFuncs } from "./compiler/index.js";
 import { initGlobalApi } from "./global-api/index.js";
 import initMixin from "./init";
 import { stateMixin } from "./initState.js";
 import { lifecycleMixin } from "./lifecycle";
 import { renderMixin } from "./vnode/index.js";
-import { createElement, patch } from "./vnode/patch.js";
 
 function Vue(options) {
     this._init(options);

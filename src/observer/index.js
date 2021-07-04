@@ -4,6 +4,7 @@ import Dep from './dep.js';
 class Observer {
     constructor(data) {
         this.dep = new Dep();
+        this.value = data;
         // 不能直接把属性挂载到data上，会造成死循环；
         Object.defineProperty(data, "__ob__", {
             value: this,

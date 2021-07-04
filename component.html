@@ -7,7 +7,57 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="app"></div>
-    <script src=""></script>
+    <div id="app">
+        <a-button></a-button>
+        <a-button></a-button>
+        <a-button></a-button>
+        <a-button></a-button>
+        <aa></aa>
+        <bb></bb>
+    </div>
+    <script src="./dist/umd/vue.js"></script>
+    <script>
+        Vue.component('a-button', {
+            data: function() {
+                return {
+                    msg: 'world'
+                }
+            },
+            template: `<button>{{msg}}</button>`,
+            mounted() {
+                console.log('msg');
+                setTimeout(() => {
+                console.log('msg', this);
+
+                    this.msg = 'world new';
+                }, 2000)
+            }
+        })
+        const vm = new Vue({
+            el: '#app',
+            components: {
+                aa: {
+                    data: function() {
+                        return {
+                            msg: 'hello'
+                        }
+                    },
+                    template: `<div>{{msg}}</div>`,
+                    mounted() {
+                        console.log('msg');
+                        setTimeout(() => {
+                        console.log('msg', this);
+
+                            this.msg = 'hello new';
+                        }, 2000)
+                    }
+                },
+                bb: {
+                    template: `<div>bbb1</div>`
+                }
+            }
+        });
+        console.log(vm); 
+    </script>
 </body>
-</html>
+</html> 

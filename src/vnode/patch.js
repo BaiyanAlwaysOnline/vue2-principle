@@ -1,6 +1,9 @@
 export function patch(oldNode, newVNode) { 
-    // 初始化时，直接用创建出来的虚拟节点，替换掉老节点
-    if (oldNode.nodeType === 1) { // 表示节点是代表元素
+    // 是组件
+    if (!oldNode) {
+        return createElement(newVNode);
+    }else if (oldNode.nodeType === 1) { // 表示节点是代表元素
+         // 初始化时，直接用创建出来的虚拟节点，替换掉老节点
         const el = createElement(newVNode);
         const parentNode = oldNode.parentNode;
         parentNode.insertBefore(el, oldNode.nextElementSibling);
@@ -44,12 +47,21 @@ export function patch(oldNode, newVNode) {
     }
 }
  
+function createComponent(vnode) {
+    vnode?.data?.hook?.init(vnode);
+    if (vnode.componentInstance) return true;
+}
+
 // ! Vue渲染流程
 // 先初始化数据（响应式） ->  将模板进行编译  ->  生成render函数   ->   生成vnode   ->   生成真实DOM  ->   挂载
 
 export function createElement(vnode) {
     const { tag, data, children, key, text } = vnode;
     if (typeof tag === 'string') { // dom节点
+        // 可能是个组件 
+        if (createComponent(vnode)) {
+            return vnode.componentInstance.$el;
+        }
         const el = document.createElement(tag);
         // 当前el有children就递归创建，逐步创建DOM树
         vnode.el = el;
