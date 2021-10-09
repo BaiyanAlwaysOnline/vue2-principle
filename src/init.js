@@ -9,7 +9,6 @@ export default function initMixin(Vue) {
         // 每次new的时候都把全局的options合并到当前实例上 
         // 合并 有可能是子组件 通过vm.constructor指向自己的构造函数
         vm.$options = mergeOptions(vm.constructor.options, options)
-        debugger;
         // 初始化的功能拓展
         // 1.初始化状态（将数据做一个初始化的劫持， 改变数据，更新视图）
         // vue组件中有很多属性 data props watch computed
